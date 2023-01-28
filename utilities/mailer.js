@@ -1,5 +1,6 @@
 "use strict";
 const nodemailer = require("nodemailer");
+const config = require("./config.json");
 
 /*
 * es un objeto que no ayudara a guardar las configuraciones para enviar un correo
@@ -9,15 +10,18 @@ let transporter = nodemailer.createTransport({
     port: 465, //puerto 465 para enviar correos
     secure: true, 
     auth: {
-      user: "elpuntodelpollo2023@gmail.com", // correo del que usara la aplicacion
-      pass: "zjlckycjcwbanrwi", // clave de aplicacion
+      user: config.email, // correo del que usara la aplicacion
+      pass: config.dinamicPassword, // clave de aplicacion
     },
   });
 
-// async..await is not allowed in global scope, must use a wrapper
-async function sendMail(admin, from, email, subject="", text="", html="") {
-    await transporter.sendMail({
-        from: `"${admin.nombre} <${admin.email}>`, // sender address
+/*
+* string, string, string, string, string?, string?, string? => Promese
+* envia un correo desde el correo de config al correo que se le indique en email
+*/
+function sendMail(adminName, adminEmail, email, subject="", text="", html="") {
+    return transporter.sendMail({
+        from: `"${adminName} <${adminEmail}>`, // sender address
         to: email, // list of receivers
         subject: subject, // Subject line
         text: text, // plain text body

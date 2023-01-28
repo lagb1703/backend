@@ -1,5 +1,8 @@
 const {createPool} = require("mysql2/promise");
 
+/*
+* se utilizara para la comunicacion con la base de datos
+*/
 const pool = createPool({
     host:"localhost",
     user:"root",
