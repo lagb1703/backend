@@ -1,17 +1,39 @@
 const router = require("express").Router();
 const pool = require("../utilities/sqlconection");
-const config = require("../utilities/config.json")
+const config = require("../utilities/config.json");
+const shoppingCart = require("../utilities/shoppingCart")
 const sendMail = require("../utilities/mailer");
+
+let cart = new shoppingCart();
 
 router.get("/user",(s,r)=>{
     /*aca se guardara el wehere del query*/
     let where = s.query.where;
     /*aca se guardara el limit de la query*/
     let limit = s.query.limit;
-    pool.query(`SELECT * FROM productos WHERE ${(where)?`(${where})`:"1"} ${(limit)?`LIMIT = ${limit}`:""}`).then((res)=>{
-        r.send(res[0]);
-    }).catch(()=>{
-        r.sendStatus(404);
+    /*guardara todos los productos enn los carritos*/
+    let products = [];
+    if(where){
+        products = cart.searchConditional(where);
+        where += " && " + products.map((product)=>` id != ${product.id}`).join(" && ");
+    }else{
+        products = cart.toArray();
+        where = products.map((product)=>` id != ${product.id}`).join(" && ");
+    }
+    if(limit){
+        if(limit - products.lenght <= 0){
+            r.send(products);
+            return;
+        }
+        limit = "LIMIT " + limit;
+    }else{
+        limit = "";
+    }
+    pool.query("SELECT id, nombre, precio, cantidad, descripcion, imagenes FROM productos " + where + " " + limit).then((res)=>{
+        r.send(res[0].concar(products));
+    }).catch((e)=>{
+        console.log(e);
+        r.send(e);
     });
 });
 
@@ -25,6 +47,8 @@ router.post("/user",(s,r)=>{
         let keys = Object.keys(s.body);
         pool.query(`INSERT INTO usuarios (${keys.join(",")}) VALUES (${values.map((value)=>(regex.test(value)?value:`"${value}"`)).join(",")})`).then((res)=>{
             r.send(res);
+        }).catch((e)=>{
+            r.send(e);
         });
     }).catch((e)=>{
         console.log(e)
@@ -32,7 +56,7 @@ router.post("/user",(s,r)=>{
     });
 });
 
-router.patch("/user",(s,r)=>{
+router.put("/user",(s,r)=>{
     if(!s.body.id || !s.body.cantidad){
         r.sendStatus(404);
         return;
@@ -61,6 +85,32 @@ router.patch("/user",(s,r)=>{
     }).catch((e)=>{
         r.send(e).sendStatus(500);
     });
+});
+
+router.patch("/user",(s,r)=>{
+    if(!s.body.id || !s.body.cantidad){
+        r.sendStatus(404);
+        return;
+    }
+    /*Aca se guardara el producto que busca el usuario*/
+    let product = cart.searchId(s.body.id);
+    if(product != null){
+        let amount = product.amount;
+        if(!(amount + s.body.cantidad < 0)){
+            product.amount = amount - s.body.cantidad;
+        }
+        r.send(amount + s.body.cantidad);
+    }else{
+        pool.query(`SELECT id, nombre, precio, cantidad, descripcion, imagenes FROM productos where id = ${s.body.id}`).then((res)=>{
+            product = shoppingCart.product(res[0][0].id, res[0][0].nombre, res[0][0].precio, res[0][0].cantidad, res[0][0].descripcion, res[0][0].imagenes);
+            cart.append(product);
+            let amount = product.amount;
+            if(!(amount + s.body.cantidad < 0)){
+                product.amount = amount - s.body.cantidad;
+            }
+            r.send(amount + s.body.cantidad);
+        });
+    }
 });
 
 module.exports = router;
