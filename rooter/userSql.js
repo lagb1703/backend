@@ -93,7 +93,8 @@ router.patch("/user",(s,r)=>{
         return;
     }
     /*Aca se guardara el producto que busca el usuario*/
-    let product = cart.searchId(s.body.id);
+    let product = cart.searchId(s.body.id, 0, cart.length);
+    console.log("---------------------------------");
     if(product != null){
         let amount = product.amount;
         if(!(amount + s.body.cantidad < 0)){

@@ -151,10 +151,15 @@ class shoppingCart{
      * @returns {producto}
      * @description esta funcion busca por medio de busqueda binaria el producto con el id indicado
      */
-    searchId(id, inicio, final){
+    searchId(id, inicio, final, n = 5){
+        if(n == 0){
+            return null;
+        }
         let medio = Math.floor((final + inicio)/2);
         let go = this.go(medio);
+        console.log(inicio, medio, final, id, go);
         if(go != undefined){
+            console.log(n);
             if(go.id == id)
                 return go;
         }else{
@@ -164,9 +169,9 @@ class shoppingCart{
             return null;
         }
         if(go.id > id){
-            return this.searchId(id, inicio, medio - 1);
+            return this.searchId(id, inicio, medio - 1, n - 1);
         }else{
-            return this.searchId(id, medio + 1, final);
+            return this.searchId(id, medio + 1, final, n - 1);
         }
     }
 
@@ -221,9 +226,9 @@ class shoppingCart{
                if(auxiliar == this.batalla){
                     this.batalla = producto;
                }else{
-                    auxiliar.anterior.siguiente = batalla;
+                    auxiliar.anterior.siguiente = producto;
                }
-               auxiliar.anterior = batalla;
+               auxiliar.anterior = producto;
             }
             this.length += 1;
             return producto;
