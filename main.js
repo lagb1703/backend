@@ -28,5 +28,5 @@ app.use((s,r)=>{
 * se prende el servidor
 */
 app.listen(app.get("port"), ()=>{
-    console.log("el demonio ha despertado en el puerto" + app.get("port"));
+    console.log("el demonio ha despertado en el puerto " + app.get("port"));
 })

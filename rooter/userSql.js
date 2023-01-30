@@ -15,10 +15,10 @@ router.get("/user",(s,r)=>{
     let products = [];
     if(where){
         products = cart.searchConditional(where);
-        where += " && " + products.map((product)=>` id != ${product.id}`).join(" && ");
+        where += (products.length > 0)?" && ":"" + products.map((product)=>` id != ${product.id}`).join(" && ");
     }else{
         products = cart.toArray();
-        where = products.map((product)=>` id != ${product.id}`).join(" && ");
+        where = (products.length > 0)?products.map((product)=>` id != ${product.id}`).join(" && "):"1";
     }
     if(limit){
         if(limit - products.lenght <= 0){
@@ -29,8 +29,8 @@ router.get("/user",(s,r)=>{
     }else{
         limit = "";
     }
-    pool.query("SELECT id, nombre, precio, cantidad, descripcion, imagenes FROM productos " + where + " " + limit).then((res)=>{
-        r.send(res[0].concar(products));
+    pool.query("SELECT id, nombre, precio, cantidad, descripcion, imagenes FROM productos WHERE " + where + " " + limit).then((res)=>{
+        r.send(res[0].concat(products));
     }).catch((e)=>{
         console.log(e);
         r.send(e);
@@ -97,18 +97,26 @@ router.patch("/user",(s,r)=>{
     if(product != null){
         let amount = product.amount;
         if(!(amount + s.body.cantidad < 0)){
-            product.amount = amount - s.body.cantidad;
+            product.amount = amount + s.body.cantidad;
+        }else{
+            product.amount = 0;
         }
-        r.send(amount + s.body.cantidad);
+        /*Guardara el total que queda en stock, si es negativo simplemente guardara los que pueda*/
+        let all = amount + s.body.cantidad;
+        r.send(all.toString());
     }else{
         pool.query(`SELECT id, nombre, precio, cantidad, descripcion, imagenes FROM productos where id = ${s.body.id}`).then((res)=>{
             product = shoppingCart.product(res[0][0].id, res[0][0].nombre, res[0][0].precio, res[0][0].cantidad, res[0][0].descripcion, res[0][0].imagenes);
             cart.append(product);
             let amount = product.amount;
             if(!(amount + s.body.cantidad < 0)){
-                product.amount = amount - s.body.cantidad;
+                product.amount = amount + s.body.cantidad;
+            }else{
+                product.amount = 0;
             }
-            r.send(amount + s.body.cantidad);
+            /*Guardara el total que queda en stock, si es negativo simplemente guardara los que pueda*/
+            let all = amount + s.body.cantidad;
+            r.send(all.toString());
         });
     }
 });

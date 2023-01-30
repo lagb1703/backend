@@ -249,4 +249,4 @@ class shoppingCart{
     }
 }
 
-export default shoppingCart;
+module.exports = shoppingCart;
