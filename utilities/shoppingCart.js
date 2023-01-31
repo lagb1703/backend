@@ -5,7 +5,7 @@ class products{
     name = "";
     price = 0;
     amount = 0;
-    source = null;
+    source = [];
     constructor(id, nombre = "", precio = 0,cantidad = 0, descripcion = "", imagen = null){
         this.id = id;
         this.name = nombre;
@@ -28,7 +28,7 @@ class shoppingCart{
      * @version 1.0
      * @author Dr.lagb1703
      * @param {Number} pos 
-     * @returns {batalla}
+     * @returns {producto}
      * @description devuelve el producto en la posicion indicada, ojo no el id, sino la posicion en la lista
      */
     go(pos){
@@ -157,7 +157,6 @@ class shoppingCart{
         }
         let medio = Math.floor((final + inicio)/2);
         let go = this.go(medio);
-        console.log(inicio, medio, final, id, go);
         if(go != undefined){
             console.log(n);
             if(go.id == id)
@@ -181,11 +180,11 @@ class shoppingCart{
      * @author Dr.lagb1703
      * @param {Funtion} funtion 
      * @returns {void}
-     * @description ejecuta la funcion callback por cada batalla activa que halla, a esta funcion se le 
+     * @description ejecuta la funcion callback por cada producto activa que halla, a esta funcion se le 
      * pasa como parametros, el producto y la posicion de este
      */
     map(funtion){
-        let auxiliar = this.batalla;
+        let auxiliar = this.root;
         var i = 0;
         while(auxiliar != null){
             funtion(auxiliar, i);
@@ -199,10 +198,10 @@ class shoppingCart{
      * @public
      * @version 1.0
      * @author Dr.lagb1703
-     * @param {baatalla} batalla 
-     * @returns {batalla}
-     * @description esta funcion agrega ordenadamente por el id, a la lista la batalla que le demos, 
-     * si algun id esta repetido, la nueva batalla cambiara si id sumandole uno hasta encontrar uno 
+     * @param {baatalla} producto 
+     * @returns {producto}
+     * @description esta funcion agrega ordenadamente por el id, a la lista la producto que le demos, 
+     * si algun id esta repetido, la nueva producto cambiara si id sumandole uno hasta encontrar uno 
      * vacio
      */
     append(producto){
@@ -217,18 +216,17 @@ class shoppingCart{
             while(auxiliar.siguiente != null && producto.id > auxiliar.id){
                 auxiliar = auxiliar.siguiente;
             }
-            if(auxiliar.siguiente == null){
+            if(auxiliar == this.root){
+                this.root = producto;
+                producto.siguiente = auxiliar;
+                auxiliar.anterior = producto;
+            }else if(auxiliar.siguiente == null){
                 producto.anterior = auxiliar;
                 auxiliar.siguiente = producto;
             }else{
                 producto.anterior = auxiliar.anterior;
-                producto.siguiente = auxiliar;
-               if(auxiliar == this.batalla){
-                    this.batalla = producto;
-               }else{
-                    auxiliar.anterior.siguiente = producto;
-               }
-               auxiliar.anterior = producto;
+                producto.siguiente = auxiliar; 
+                auxiliar.anterior = producto;
             }
             this.length += 1;
             return producto;
@@ -253,5 +251,4 @@ class shoppingCart{
         return products;
     }
 }
-
 module.exports = shoppingCart;
