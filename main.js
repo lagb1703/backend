@@ -20,6 +20,8 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(require("./rooter/adminSql"));
 /*para el sql del usuario*/
 app.use(require("./rooter/userSql"));
+/*para buscar si existe un email*/
+app.use(require("./rooter/confirmations"));
 /*
 * midwere de ruta equivocada
 */

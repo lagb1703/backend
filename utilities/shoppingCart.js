@@ -5,6 +5,7 @@ class products{
     name = "";
     price = 0;
     amount = 0;
+    description = ""
     source = [];
     constructor(id, nombre = "", precio = 0,cantidad = 0, descripcion = "", imagen = null){
         this.id = id;
@@ -12,6 +13,11 @@ class products{
         this.amount = cantidad;
         this.price = precio;
         this.source = imagen;
+        this.description = descripcion;
+    }
+
+    toJson(){
+        return{id:this.id, nombre:this.name, precio:this.price, cantidad:this.amount, descripcion: this.description, imagenes: this.source};
     }
 }
 
@@ -61,17 +67,17 @@ class shoppingCart{
                     switch(condicion){
                         case "=":
                             if(id == auxiliar.id){
-                                return [{id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source}];
+                                return [auxiliar.toJson()];
                             }
                             break;
                         case "<":
                             if(auxiliar.id < id){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                         case ">":
                             if(auxiliar.id > id){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                     }
@@ -83,7 +89,7 @@ class shoppingCart{
                 let products = [];
                 while(auxiliar != null){
                     if(auxiliar.name == nombre){
-                        products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                        products.push(auxiliar.toJson());
                     }
                     auxiliar = auxiliar.siguiente;
                 }
@@ -95,17 +101,17 @@ class shoppingCart{
                     switch(condicion){
                         case "=":
                             if(precio == auxiliar.price){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                         case "<":
                             if(auxiliar.price < precio){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                         case ">":
                             if(auxiliar.price > precio){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                     }
@@ -119,17 +125,17 @@ class shoppingCart{
                     switch(condicion){
                         case "=":
                             if(cantidad == auxiliar.amount){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                         case "<":
                             if(auxiliar.amount < cantidad){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                         case ">":
                             if(auxiliar.amount > cantidad){
-                                products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
+                                products.push(auxiliar.toJson());
                             }
                             break;
                     }
@@ -152,19 +158,15 @@ class shoppingCart{
      * @description esta funcion busca por medio de busqueda binaria el producto con el id indicado
      */
     searchId(id, inicio, final, n = 5){
-        if(n == 0){
-            return null;
-        }
         let medio = Math.floor((final + inicio)/2);
         let go = this.go(medio);
         if(go != undefined){
-            console.log(n);
             if(go.id == id)
                 return go;
         }else{
             return null;
         }
-        if(inicio == final){
+        if(inicio == final || medio < 0){
             return null;
         }
         if(go.id > id){
@@ -183,15 +185,15 @@ class shoppingCart{
      * @description ejecuta la funcion callback por cada producto activa que halla, a esta funcion se le 
      * pasa como parametros, el producto y la posicion de este
      */
-    map(funtion){
+    map(funtion, array=[]){
         let auxiliar = this.root;
         var i = 0;
         while(auxiliar != null){
-            funtion(auxiliar, i);
+            array.push(funtion(auxiliar, i));
             auxiliar = auxiliar.siguiente;
             i++;
         }
-        return;
+        return array;
     }
 
     /**
@@ -242,13 +244,7 @@ class shoppingCart{
      * @description combierte toda la lista en un array de JSON
      */
     toArray(){
-        let products = [];
-        let auxiliar = this.root;
-        while(auxiliar != null){
-            products.push({id:auxiliar.id, nombre:auxiliar.name, precio:auxiliar.price, cantidad:auxiliar.amount, imagen:auxiliar.source});
-            auxiliar = auxiliar.siguiente;
-        }
-        return products;
+        return this.map((product)=>product.toJson());
     }
 }
 module.exports = shoppingCart;

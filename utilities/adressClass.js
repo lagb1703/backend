@@ -1,7 +1,7 @@
 /*
 * Esta clase guardara un formato de direccion
 */
-class adress{
+class address{
     /*guardara la avenida*/
     avenue = "";
     /*guardara la calle*/
@@ -26,4 +26,4 @@ class adress{
     }
 }
 
-module.exports = adress;
+module.exports = address;
