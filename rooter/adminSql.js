@@ -15,6 +15,7 @@ router.get("/sql", (s,r)=>{
         /*se guardara el limit que esta en la query*/
         let limit = s.query.limit
         /*se hace la consulta*/
+        console.log(`SELECT ${selector} from ${table} WHERE ${(where)?`(${where})`:"1"} ${(limit)?`LIMIT ${limit}`: ""}`);
         pool.query(`SELECT ${selector} from ${table} WHERE ${(where)?`(${where})`:"1"} ${(limit)?`LIMIT ${limit}`: ""}`).then((data)=>{
             r.send(data[0]);
         }).catch(()=>{
@@ -45,7 +46,6 @@ router.post("/sql",(s,r)=>{
     /*se igualan las dos tablas*/
     keys.shift();
     keys.shift();
-    console.log(`INSERT INTO ${table} (${keys.join(",")}) VALUES (${values.map((value)=>(regex.test(value)?value:`"${value}"`)).join(",")})`)
     pool.query(`INSERT INTO ${table} (${keys.join(",")}) VALUES (${values.map((value)=>(regex.test(value)?value:`"${value}"`)).join(",")})`).then((res)=>{
         console.log("insercion de datos lista");
         r.send(res);
@@ -131,6 +131,7 @@ router.put("/sql",(s,r)=>{
     /*aca se guardara el id*/
     let id = values.pop();
     keys.pop();
+    console.log(`UPDATE ${table} SET ${keys.map((key, i)=>{return `${key} = ${regex.test(values[i])?values[i]:`"${values[i]}"`}`}).join(", ")} where id = ${id}`);
     pool.query(`UPDATE ${table} SET ${keys.map((key, i)=>{return `${key} = ${regex.test(values[i])?values[i]:`"${values[i]}"`}`}).join(", ")} where id = ${id}`).then((res)=>{
         console.log("producto cambiado");
         r.send(res);
