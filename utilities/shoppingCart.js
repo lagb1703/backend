@@ -1,12 +1,13 @@
-class products{
-    anterior = null;
-    siguiente = null;
-    id = -1;
-    name = "";
-    price = 0;
-    amount = 0;
-    description = ""
-    source = [];
+
+class Products{
+    anterior = null;//guarda el producto anterior de la lista
+    siguiente = null;//guarda el producto siguiente de la lista
+    id = -1;//guarda el id el producto
+    name = "";//guarda el nombre del producto
+    price = 0;//guarda el precio del producto
+    amount = 0;//guarda la cantidad del producto
+    description = "";//guarda la descripcion del producto
+    source = [];//guarda las imagenes del producto
     constructor(id, nombre = "", precio = 0,cantidad = 0, descripcion = "", imagen = null){
         this.id = id;
         this.name = nombre;
@@ -16,17 +17,22 @@ class products{
         this.description = descripcion;
     }
 
+    /**
+     * 
+     * @returns {JSON}
+     * @description convierte el objeto a JSON, sin su atributos de siguinete y anterior
+     */
     toJson(){
         return{id:this.id, nombre:this.name, precio:this.price, cantidad:this.amount, descripcion: this.description, imagenes: this.source};
     }
 }
 
-class shoppingCart{
-    root = null;
-    length = 0;
+class ShoppingCart{
+    root = null;//guarda el primer producto de la lista
+    length = 0;//guarda el tamaño de la lista
 
     static product(id, nombre = "", precio = 0, cantidad = 0, descripcion = "", imagenes = null){
-        return new products(id, nombre, precio, cantidad, descripcion, imagenes);
+        return new Products(id, nombre, precio, cantidad, descripcion, imagenes);
     }
 
     /**
@@ -60,9 +66,10 @@ class shoppingCart{
     searchConditional(condicion){
         let comand = condicion.split(" ");
         let auxiliar = this.root;
-        const keys = {
+        /*Aca creamos un JSON con diferentes metodos de busqueda*/
+        const KEYS = {
             id:(condicion, id)=>{
-                let products = [];
+                let Products = [];
                 while(auxiliar != null){
                     switch(condicion){
                         case "=":
@@ -72,79 +79,80 @@ class shoppingCart{
                             break;
                         case "<":
                             if(auxiliar.id < id){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                         case ">":
                             if(auxiliar.id > id){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                     }
                     auxiliar = auxiliar.siguiente;
                 }
-                return products;
+                return Products;
             },
             nombre:(condicion, nombre)=>{
-                let products = [];
+                let Products = [];
                 while(auxiliar != null){
                     if(auxiliar.name == nombre){
-                        products.push(auxiliar.toJson());
+                        Products.push(auxiliar.toJson());
                     }
                     auxiliar = auxiliar.siguiente;
                 }
-                return products;
+                return Products;
             },
             precio:(condicion, precio)=>{
-                let products = [];
+                let Products = [];
                 while(auxiliar != null){
                     switch(condicion){
                         case "=":
                             if(precio == auxiliar.price){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                         case "<":
                             if(auxiliar.price < precio){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                         case ">":
                             if(auxiliar.price > precio){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                     }
                     auxiliar = auxiliar.siguiente;
                 }
-                return products;
+                return Products;
             },
             cantidad:(condicion, cantidad)=>{
-                let products = [];
+                let Products = [];
                 while(auxiliar != null){
                     switch(condicion){
                         case "=":
                             if(cantidad == auxiliar.amount){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                         case "<":
                             if(auxiliar.amount < cantidad){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                         case ">":
                             if(auxiliar.amount > cantidad){
-                                products.push(auxiliar.toJson());
+                                Products.push(auxiliar.toJson());
                             }
                             break;
                     }
                     auxiliar = auxiliar.siguiente;
                 }
-                return products;
+                return Products;
             }
         }
-        return keys[comand[0]](comand[1], comand[2]);
+        /*buscamos el metodo y lo accionamos*/
+        return KEYS[comand[0]](comand[1], comand[2]);
     }
 
     /**
@@ -247,4 +255,4 @@ class shoppingCart{
         return this.map((product)=>product.toJson());
     }
 }
-module.exports = shoppingCart;
+module.exports = ShoppingCart;

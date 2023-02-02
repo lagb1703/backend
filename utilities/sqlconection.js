@@ -1,9 +1,9 @@
-const {createPool} = require("mysql2/promise");
+const {createPOOL} = require("mysql2/promise");
 
 /*
 * se utilizara para la comunicacion con la base de datos
 */
-const pool = createPool({
+const POOL = createPOOL({
     host:"localhost",
     user:"root",
     password:"root",
@@ -12,4 +12,4 @@ const pool = createPool({
     socketPath : '/Applications/MAMP/tmp/mysql/mysql.sock'
 });
 
-module.exports = pool;
+module.exports = POOL;
