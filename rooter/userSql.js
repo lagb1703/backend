@@ -82,19 +82,21 @@ router.put("/user",(s,r)=>{
         let id = s.body.id;
         if(minimun >= amount + s.body.cantidad){
             /*se envia un cooreo al admin diciendo quee se acaba el stock*/
-            sendMail("luis", "luis.giraldo3@utp.edi.co", CONFIG.email, `se te esta acabando el stock del producto ${nombre}`, `El producto ${name} con el id ${id} se esta acabando el stock.\n Stock actual: ${amount}`)
+            sendMail("luis", "luis.giraldo3@utp.edi.co", CONFIG.email, `se te esta acabando el stock del producto ${name}`, `El producto ${name} con el id ${id} se esta acabando el stock.\n Stock actual: ${amount + s.body.cantidad}`)
         }
         if(amount + s.body.cantidad <= 0){
             r.send(amount + s.body.cantidad).sendStatus(409);
         }
-        POOL.query(`UPDATE cantidad FROM productos WHERE id = ${id}`).then((res)=>{
+        POOL.query(`UPDATE productos SET cantidad = cantidad + ${s.body.cantidad}  WHERE id = ${id}`).then((res)=>{
             r.send(res);
         }).catch((e)=>{
-            r.send(e).sendStatus(500);
+            console.log(e);
+            r.sendStatus(500);
         });
 
     }).catch((e)=>{
-        r.send(e).sendStatus(500);
+        console.log(e);
+        r.sendStatus(500);
     });
 });
 

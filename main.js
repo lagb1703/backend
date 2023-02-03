@@ -22,6 +22,8 @@ app.use(require("./rooter/adminSql"));
 app.use(require("./rooter/userSql"));
 /*para buscar si existe un email*/
 app.use(require("./rooter/confirmations"));
+/*ruta para los pagos*/
+app.use(require("./rooter/pay"));
 /*
 * midwere de ruta equivocada
 */

@@ -7,15 +7,18 @@ const stripe = require("stripe")(CONFIG.secretKey)
 * Aca se procesaran lso pagos
 */
 router.post("/pay", (s,r)=>{
-    let customer = stripe.customers.create({
-        email:s.body.strupeEmail,
-        source: s.body.stripeToken
-    });
-    stripe.charges.create({
-        amount: s.body.cantidad,
-        currency: "cop",
-        customer:customer.id,
-        description:s.body.descripcion
+    let {id, amount, description} = s.body;
+    stripe.paymentIntents.create({
+        amount: amount*100,
+        description: description,
+        currency: 'cop',
+        payment_method: id,
+        confirm: true
+    }).then((pay)=>{
+        r.sendStatus(204);
+    }).catch((e)=>{
+        console.log(e);
+        r.sendStatus(400);
     });
 });
 

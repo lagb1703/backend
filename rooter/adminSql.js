@@ -19,7 +19,6 @@ router.get("/sql", (s,r)=>{
         /*se guardara el limit que esta en la query*/
         let limit = s.query.limit
         /*se hace la consulta*/
-        console.log(`SELECT ${selector} from ${table} WHERE ${(where)?`(${where})`:"1"} ${(limit)?`LIMIT ${limit}`: ""}`);
         POOL.query(`SELECT ${selector} from ${table} WHERE ${(where)?`(${where})`:"1"} ${(limit)?`LIMIT ${limit}`: ""}`).then((data)=>{
             r.send(data[0]);
         }).catch(()=>{
@@ -131,6 +130,7 @@ router.patch("/sql",(s,r)=>{
 * Con este endpoint se debe tener contraseña para ser utilizado, este sirve para modificar todo un registro
 */
 router.put("/sql",(s,r)=>{
+    console.log(s.body);
     if(!s.body.tabla || !s.body.id){
         r.sendStatus(404)
         return;
