@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const POOL = require("../utilities/sqlconection");
 const CONFIG = require("../utilities/config.json");
-const ShoppingCart = require("../utilities/ShoppingCart.js")
+const ShoppingCart = require("../utilities/shoppingCart")
 const sendMail = require("../utilities/mailer.js");
 
 let cart = new ShoppingCart();/*cart se utilizara para la reserva de productos*/
