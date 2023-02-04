@@ -1,6 +1,6 @@
 "use strict";
 const nodemailer = require("nodemailer");
-const CONFIG = require("./CONFIG.json");
+const CONFIG = require("./config.json");
 
 /*
 * es un objeto que no ayudara a guardar las CONFIGuraciones para enviar un correo

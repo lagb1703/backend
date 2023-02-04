@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const POOL = require("../utilities/sqlconection");
-const CONFIG = require("../utilities/CONFIG.json");
+const CONFIG = require("../utilities/config.json");
 const ShoppingCart = require("../utilities/ShoppingCart")
 const sendMail = require("../utilities/mailer");
 
